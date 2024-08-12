@@ -1,9 +1,12 @@
 package com.demo.en.customerservice.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -17,6 +20,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
         ApiErrorResponse response = new ApiErrorResponse(ApiErrorCode.INVALID_SEARCH_PARAMETERS.getCode(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiErrorResponse> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        String errorMessage = "Invalid ID format: " + ex.getValue() + ". ID must be a numeric value.";
+        ApiErrorResponse response = new ApiErrorResponse(ApiErrorCode.INVALID_SEARCH_PARAMETERS.getCode(), errorMessage);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        String errorMessage = ex.getMessage();
+        ApiErrorResponse response = new ApiErrorResponse(ApiErrorCode.INVALID_SEARCH_PARAMETERS.getCode(), errorMessage);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

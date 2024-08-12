@@ -26,8 +26,6 @@ public class CustomerService {
                     return new CustomerNotFoundException("Customer not found with ID: " + id);
                 });
     }
-
-
     public List<Customer> searchCustomers(String lastName, LocalDate dateOfBirth, String firstName, String zipCode) {
         logger.info("Searching customers with provided parameters");
         if (lastName != null && dateOfBirth != null) {
